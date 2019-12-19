@@ -1,0 +1,6 @@
+".\Output\main.obj",
+".\Output\SYS_INT.obj",
+".\Output\USER_Function.obj",
+".\Output\Function.obj" 
+TO ".\Output\DigitalVoltmeter" 
+PRINT(".\Listing\DigitalVoltmeter.m51") CODE( 0X0000-0X0FFF )

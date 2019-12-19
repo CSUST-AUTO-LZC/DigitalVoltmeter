@@ -1,0 +1,258 @@
+A51 MACRO ASSEMBLER  FUNCTION                                                             06/08/2019 20:51:41 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.02b
+OBJECT MODULE PLACED IN .\Output\Function.obj
+ASSEMBLER INVOKED BY: D:\Program Files_X64\Keil\C51\BIN\A51.EXE ..\Common\INC\Function.asm SET(SMALL) DEBUG PRINT(.\List
+                      ing\Function.lst) OBJECT(.\Output\Function.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     
+                       2     NAME COMMON_DEFINED_FUNCTION      ;本模块名：COMMON_DEFINED_FUNCTION
+                       3     
+                       4     COMMON_FUN_CODE SEGMENT CODE    ;定义可重定位段
+----                   5     RSEG COMMON_FUN_CODE            ;选择可可重定位段  
+                       6     
+                       7     
+  00A5                 8     LCD_RW BIT P2.5
+  00A6                 9     LCD_RS BIT P2.6
+  00A7                10     LCD_EN BIT P2.7
+  0080                11     LCD_PORT EQU P0
+                      12     
+                      13     PUBLIC DELAY_ms,DELAY_us    ;外部接口定义声明
+                      14     PUBLIC LCD_init,LCD_DISPLAY     ;LCD1602外部软件接口定义声明
+                      15     
+                      16     EXTRN CODE (S_TX)     ;外部引用函数代码参考调用声明
+                      17     EXTRN DATA (INTE_value,DECI_value1,DECI_value2)     ;外部引用变量空间参考调用�
+                             �明
+                      18     
+                      19     
+0000                  20     DELAY_ms:  ;MOV R5,#5
+                      21             ;PUSH ACC
+0000 AEC8             22     D1:     MOV R6,200
+0002 AFFA             23     D2:     MOV R7,250
+0004 DFFE             24     D3:     DJNZ R7,D3
+0006 DEFA             25             DJNZ R6,D2
+0008 DDF6             26             DJNZ R5,D1
+                      27             ;POP ACC
+000A 22               28         RET
+                      29     
+                      30     
+000B                  31     DELAY_us:  ;MOV R5,#5
+                      32             ;PUSH ACC
+000B DDFE             33     D4:     DJNZ R5,D4
+                      34             ;POP ACC
+000D 22               35         RET
+                      36     
+                      37     
+000E C0E0             38     LCD_init:   PUSH ACC
+0010 C2A7             39                 CLR LCD_EN
+0012 7D01             40                 MOV R5,#1
+0014 1100     F       41                 ACALL DELAY_ms
+0016 758038           42                 MOV LCD_PORT,#00111000B     ;
+0019 1100     F       43                 ACALL LCD_CMD_WR
+001B 7D01             44                 MOV R5,#1
+001D 1100     F       45                 ACALL DELAY_ms
+001F 75800C           46                 MOV LCD_PORT,#00001100B      ;
+0022 1100     F       47                 ACALL LCD_CMD_WR
+0024 7D01             48                 MOV R5,#1
+0026 1100     F       49                 ACALL DELAY_ms
+0028 758006           50                 MOV LCD_PORT,#00000110B     ;
+002B 1100     F       51                 ACALL LCD_CMD_WR
+002D 7D01             52                 MOV R5,#1
+002F 1100     F       53                 ACALL DELAY_ms
+0031 758001           54                 MOV LCD_PORT,#00000001B     ;
+0034 1100     F       55                 ACALL LCD_CMD_WR
+0036 7D01             56                 MOV R5,#1
+A51 MACRO ASSEMBLER  FUNCTION                                                             06/08/2019 20:51:41 PAGE     2
+
+0038 1100     F       57                 ACALL DELAY_ms
+003A 758002           58                 MOV LCD_PORT,#00000010B     ;
+003D 1100     F       59                 ACALL LCD_CMD_WR
+                      60                 
+003F 7D0A             61                 MOV R5,#10
+0041 1100     F       62                 ACALL DELAY_us
+                      63                 
+0043 75804F           64                 MOV LCD_PORT,#'O'
+0046 1100     F       65                 ACALL LCD_DATA_WR
+0048 75804B           66                 MOV LCD_PORT,#'K'
+004B 1100     F       67                 ACALL LCD_DATA_WR
+                      68                 
+004D 7D64             69                 MOV R5,#100
+004F 1100     F       70                 ACALL DELAY_us
+                      71                 
+0051 D0E0             72                 POP ACC
+0053 22               73         RET
+                      74     
+                      75     
+0054                  76     LCD_CMD_WR: ;PUSH ACC
+0054 1100     F       77                 ACALL BUSY_CHECK
+0056 C2A6             78                 CLR LCD_RS
+0058 C2A5             79                 CLR LCD_RW
+005A 7D0A             80                 MOV R5,#10
+005C 1100     F       81                 ACALL DELAY_us
+005E D2A7             82                 SETB LCD_EN
+0060 7D0A             83                 MOV R5,#10
+0062 1100     F       84                 ACALL DELAY_us
+0064 C2A7             85                 CLR LCD_EN
+                      86                 ;POP ACC
+0066 22               87         RET
+                      88     
+                      89     
+0067 C0E0             90     LCD_DATA_WR: PUSH ACC
+0069 1100     F       91                 ACALL BUSY_CHECK
+006B D2A6             92                 SETB LCD_RS
+006D C2A5             93                 CLR LCD_RW
+006F 7D0A             94                 MOV R5,#10
+0071 1100     F       95                 ACALL DELAY_us
+0073 D2A7             96                 SETB LCD_EN
+0075 7D0A             97                 MOV R5,#10
+0077 1100     F       98                 ACALL DELAY_us
+0079 C2A7             99                 CLR LCD_EN
+007B D0E0            100                 POP ACC
+007D 22              101         RET
+                     102     
+                     103     
+007E C0E0            104     BUSY_CHECK: PUSH ACC
+0080 C2A7            105           LOOP: CLR LCD_EN
+0082 E580            106                 MOV A,LCD_PORT
+0084 7580FF          107                 MOV LCD_PORT,#0FFH
+0087 C2A6            108                 CLR LCD_RS
+0089 D2A5            109                 SETB LCD_RW
+008B 7D0A            110                 MOV R5,#10
+008D 1100     F      111                 ACALL DELAY_us
+008F D2A7            112                 SETB LCD_EN
+0091 7D0A            113                 MOV R5,#10
+0093 1100     F      114                 ACALL DELAY_us
+0095 2087E8          115                 JB LCD_PORT.7,LOOP
+0098 C2A7            116                 CLR LCD_EN
+009A F580            117                 MOV LCD_PORT,A
+009C D0E0            118                 POP ACC
+009E 22              119         RET
+                     120     
+                     121     
+009F C0E0            122     LCD_STRING_WR: PUSH ACC
+A51 MACRO ASSEMBLER  FUNCTION                                                             06/08/2019 20:51:41 PAGE     3
+
+00A1 7900            123                 MOV R1,#00H
+                     124                 ;MOV DPTR,#LCD_STR_TAB
+00A3 E9              125       STR_LOOP: MOV A,R1
+00A4 93              126                 MOVC A,@A+DPTR
+00A5 6007            127                 JZ  STR_END
+00A7 F580            128                 MOV LCD_PORT,A
+00A9 1100     F      129                 ACALL LCD_DATA_WR
+00AB 09              130                 INC R1
+00AC 80F5            131                 SJMP STR_LOOP
+00AE D0E0            132        STR_END: POP ACC
+00B0 22              133         RET
+                     134     
+00B1 44696769        135     LCD_STR_TAB1: DB "DigitalVoltmeter",00H
+00B5 74616C56                
+00B9 6F6C746D                
+00BD 65746572                
+00C1 00                      
+00C2 20202056        136     LCD_STR_TAB2: DB "   VOLT:",00H
+00C6 4F4C543A                
+00CA 00                      
+                     137     
+                     138     
+00CB                 139     LCD_NUM_WR: ;PUSH ACC
+00CB 900000   F      140                 MOV DPTR,#LCD_NUM_TAB
+00CE 93              141                 MOVC A,@A+DPTR
+00CF F580            142                 MOV LCD_PORT,A
+00D1 1100     F      143                 ACALL LCD_DATA_WR
+                     144                 ;POP ACC
+00D3 22              145         RET
+                     146         
+00D4 30313233        147     LCD_NUM_TAB: DB "0123456789"
+00D8 34353637                
+00DC 3839                    
+                     148     
+                     149     
+00DE                 150     LCD_DISPLAY:   ;PUSH ACC
+00DE 7D32            151                 MOV R5,#50
+00E0 1100     F      152                 ACALL DELAY_us
+                     153                 
+00E2 758080          154                 MOV LCD_PORT,#80H
+00E5 1100     F      155                 ACALL LCD_CMD_WR
+                     156                 
+00E7 900000   F      157                 MOV DPTR,#LCD_STR_TAB1
+00EA 1100     F      158                 ACALL LCD_STRING_WR
+                     159                 
+00EC 7D01            160                 MOV R5,#1
+00EE 1100     F      161                 ACALL DELAY_ms
+                     162                 
+00F0 7580C0          163                 MOV LCD_PORT,#0C0H
+00F3 1100     F      164                 ACALL LCD_CMD_WR
+                     165                 
+00F5 900000   F      166                 MOV DPTR,#LCD_STR_TAB2
+00F8 1100     F      167                 ACALL LCD_STRING_WR
+                     168                 
+00FA E500     F      169                 MOV A,INTE_value
+00FC 1100     F      170                 ACALL LCD_NUM_WR
+                     171                 
+00FE 75802E          172                 MOV LCD_PORT,#'.'
+0101 1100     F      173                 ACALL LCD_DATA_WR
+                     174                 
+0103 E500     F      175                 MOV A,DECI_value1
+0105 1100     F      176                 ACALL LCD_NUM_WR
+                     177                 
+0107 E500     F      178                 MOV A,DECI_value2
+0109 1100     F      179                 ACALL LCD_NUM_WR
+                     180                 
+A51 MACRO ASSEMBLER  FUNCTION                                                             06/08/2019 20:51:41 PAGE     4
+
+010B 758056          181                 MOV LCD_PORT,#'V'
+010E 1100     F      182                 ACALL LCD_DATA_WR
+                     183                
+                     184                ;POP ACC
+0110 22              185         RET
+                     186         
+                     187     END
+A51 MACRO ASSEMBLER  FUNCTION                                                             06/08/2019 20:51:41 PAGE     5
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E                  T Y P E  V A L U E   ATTRIBUTES
+
+ACC . . . . . . . . . .  D ADDR   00E0H   A   
+BUSY_CHECK. . . . . . .  C ADDR   007EH   R   SEG=COMMON_FUN_CODE
+COMMON_DEFINED_FUNCTION  N NUMB   -----       
+COMMON_FUN_CODE . . . .  C SEG    0111H       REL=UNIT
+D1. . . . . . . . . . .  C ADDR   0000H   R   SEG=COMMON_FUN_CODE
+D2. . . . . . . . . . .  C ADDR   0002H   R   SEG=COMMON_FUN_CODE
+D3. . . . . . . . . . .  C ADDR   0004H   R   SEG=COMMON_FUN_CODE
+D4. . . . . . . . . . .  C ADDR   000BH   R   SEG=COMMON_FUN_CODE
+DECI_VALUE1 . . . . . .  D ADDR   -----       EXT
+DECI_VALUE2 . . . . . .  D ADDR   -----       EXT
+DELAY_MS. . . . . . . .  C ADDR   0000H   R   SEG=COMMON_FUN_CODE
+DELAY_US. . . . . . . .  C ADDR   000BH   R   SEG=COMMON_FUN_CODE
+INTE_VALUE. . . . . . .  D ADDR   -----       EXT
+LCD_CMD_WR. . . . . . .  C ADDR   0054H   R   SEG=COMMON_FUN_CODE
+LCD_DATA_WR . . . . . .  C ADDR   0067H   R   SEG=COMMON_FUN_CODE
+LCD_DISPLAY . . . . . .  C ADDR   00DEH   R   SEG=COMMON_FUN_CODE
+LCD_EN. . . . . . . . .  B ADDR   00A0H.7 A   
+LCD_INIT. . . . . . . .  C ADDR   000EH   R   SEG=COMMON_FUN_CODE
+LCD_NUM_TAB . . . . . .  C ADDR   00D4H   R   SEG=COMMON_FUN_CODE
+LCD_NUM_WR. . . . . . .  C ADDR   00CBH   R   SEG=COMMON_FUN_CODE
+LCD_PORT. . . . . . . .  D ADDR   0080H   A   
+LCD_RS. . . . . . . . .  B ADDR   00A0H.6 A   
+LCD_RW. . . . . . . . .  B ADDR   00A0H.5 A   
+LCD_STRING_WR . . . . .  C ADDR   009FH   R   SEG=COMMON_FUN_CODE
+LCD_STR_TAB1. . . . . .  C ADDR   00B1H   R   SEG=COMMON_FUN_CODE
+LCD_STR_TAB2. . . . . .  C ADDR   00C2H   R   SEG=COMMON_FUN_CODE
+LOOP. . . . . . . . . .  C ADDR   0080H   R   SEG=COMMON_FUN_CODE
+P0. . . . . . . . . . .  D ADDR   0080H   A   
+P2. . . . . . . . . . .  D ADDR   00A0H   A   
+STR_END . . . . . . . .  C ADDR   00AEH   R   SEG=COMMON_FUN_CODE
+STR_LOOP. . . . . . . .  C ADDR   00A3H   R   SEG=COMMON_FUN_CODE
+S_TX. . . . . . . . . .  C ADDR   -----       EXT
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

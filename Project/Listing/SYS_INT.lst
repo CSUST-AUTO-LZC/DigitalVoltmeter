@@ -1,0 +1,150 @@
+A51 MACRO ASSEMBLER  SYS_INT                                                              06/08/2019 20:51:41 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.02b
+OBJECT MODULE PLACED IN .\Output\SYS_INT.obj
+ASSEMBLER INVOKED BY: D:\Program Files_X64\Keil\C51\BIN\A51.EXE ..\USER\INC\SYS_INT.asm SET(SMALL) DEBUG PRINT(.\Listing
+                      \SYS_INT.lst) OBJECT(.\Output\SYS_INT.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     
+                       2     NAME INT_SERVER_FUNCTION    ;本模块名：USER_DEFINED_FUNCTION
+                       3     
+                       4     FUN_CODE  SEGMENT  CODE     ;定义可重定位段
+----                   5     RSEG  FUN_CODE              ;选择可可重定位段
+                       6     
+                       7     PUBLIC INT_INIT,INT0S,INT1S,T0S,T1S,S_TX,S_RX    ;外部接口定义声明
+                       8     EXTRN DATA (INTE_value,DECI_value1,DECI_value2)     ;外部引用变量空间参考调用�
+                             �明
+                       9     
+                      10     
+0000 00               11     INT0S:  NOP
+0001 00               12             NOP
+0002 32               13         RETI
+                      14             
+                      15     
+0003 00               16     INT1S:  NOP
+0004 00               17             NOP
+0005 32               18         RETI
+                      19             
+                      20     
+0006 00               21     T0S:    NOP
+0007 00               22             NOP
+0008 32               23         RETI
+                      24             
+                      25             
+0009 00               26     T1S:   NOP
+000A 00               27            NOP
+000B 32               28         RETI
+                      29             
+                      30     
+000C 8999             31     S_TX:   MOV SBUF,R1
+000E 3099FD           32             JNB TI,$
+0011 C299             33             CLR TI
+0013 32               34         RETI
+                      35             
+                      36     
+0014 30983F           37     S_RX:   JNB RI,S_RX_EXIT
+0017 C0E0             38             PUSH ACC
+0019 E599             39             MOV A,SBUF
+001B 3098FD           40             JNB RI,$
+001E C298             41             CLR RI
+                      42             
+0020 B45631           43             CJNE A,#'V',LOOPX
+0023 E500     F       44             MOV A,INTE_value
+0025 2430             45             ADD A,#30H
+0027 F599             46             MOV SBUF,A
+0029 3099FD           47             JNB TI,$
+002C C299             48             CLR TI
+                      49             
+002E 75992E           50             MOV SBUF,#'.'
+0031 3099FD           51             JNB TI,$
+0034 C299             52             CLR TI
+                      53             
+0036 E500     F       54             MOV A,DECI_value1
+0038 2430             55             ADD A,#30H
+003A F599             56             MOV SBUF,A
+A51 MACRO ASSEMBLER  SYS_INT                                                              06/08/2019 20:51:41 PAGE     2
+
+003C 3099FD           57             JNB TI,$
+003F C299             58             CLR TI
+                      59             
+0041 E500     F       60             MOV A,DECI_value2
+0043 2430             61             ADD A,#30H
+0045 F599             62             MOV SBUF,A
+0047 3099FD           63             JNB TI,$
+004A C299             64             CLR TI
+                      65             
+004C 75990D           66             MOV SBUF,#00001101B
+004F 3099FD           67             JNB TI,$
+0052 C299             68             CLR TI
+                      69             
+0054 D0E0             70      LOOPX: POP ACC
+0056 00               71     S_RX_EXIT:  NOP
+                      72     
+0057 32               73         RETI
+                      74     
+                      75     
+0058                  76     INT_INIT:    
+0058 75B800           77                 MOV IP,#00000000B   ;
+005B 75A892           78                 MOV IE,#10010010B   ;
+005E 758921           79                 MOV TMOD,#00100001B     ;T1 MODE2,  T0 MODE=1    ;定时计数模式计数器TM
+                             OD
+0061 758810           80                 MOV TCON,#00010000B     ;
+0064 758780           81                 MOV PCON,#10000000B     ;波特率加倍
+0067 759850           82                 MOV SCON,#01010000B
+006A 75D000           83                 MOV PSW,#00000000B
+006D 758C3C           84                 MOV TH0,#3CH       ;
+0070 758AB0           85                 MOV TL0,#0B0H        ;
+0073 758DE6           86                 MOV TH1,#0E6H       ;1200bps*2=2400bps
+0076 758BE6           87                 MOV TL1,#0E6H        ;
+                      88                 ;SETB TR0    ;
+0079 D28E             89                 SETB TR1
+007B 22               90         RET
+                      91     
+                      92     END        
+A51 MACRO ASSEMBLER  SYS_INT                                                              06/08/2019 20:51:41 PAGE     3
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E              T Y P E  V A L U E   ATTRIBUTES
+
+ACC . . . . . . . .  D ADDR   00E0H   A   
+DECI_VALUE1 . . . .  D ADDR   -----       EXT
+DECI_VALUE2 . . . .  D ADDR   -----       EXT
+FUN_CODE. . . . . .  C SEG    007CH       REL=UNIT
+IE. . . . . . . . .  D ADDR   00A8H   A   
+INT0S . . . . . . .  C ADDR   0000H   R   SEG=FUN_CODE
+INT1S . . . . . . .  C ADDR   0003H   R   SEG=FUN_CODE
+INTE_VALUE. . . . .  D ADDR   -----       EXT
+INT_INIT. . . . . .  C ADDR   0058H   R   SEG=FUN_CODE
+INT_SERVER_FUNCTION  N NUMB   -----       
+IP. . . . . . . . .  D ADDR   00B8H   A   
+LOOPX . . . . . . .  C ADDR   0054H   R   SEG=FUN_CODE
+PCON. . . . . . . .  D ADDR   0087H   A   
+PSW . . . . . . . .  D ADDR   00D0H   A   
+RI. . . . . . . . .  B ADDR   0098H.0 A   
+SBUF. . . . . . . .  D ADDR   0099H   A   
+SCON. . . . . . . .  D ADDR   0098H   A   
+S_RX. . . . . . . .  C ADDR   0014H   R   SEG=FUN_CODE
+S_RX_EXIT . . . . .  C ADDR   0056H   R   SEG=FUN_CODE
+S_TX. . . . . . . .  C ADDR   000CH   R   SEG=FUN_CODE
+T0S . . . . . . . .  C ADDR   0006H   R   SEG=FUN_CODE
+T1S . . . . . . . .  C ADDR   0009H   R   SEG=FUN_CODE
+TCON. . . . . . . .  D ADDR   0088H   A   
+TH0 . . . . . . . .  D ADDR   008CH   A   
+TH1 . . . . . . . .  D ADDR   008DH   A   
+TI. . . . . . . . .  B ADDR   0098H.1 A   
+TL0 . . . . . . . .  D ADDR   008AH   A   
+TL1 . . . . . . . .  D ADDR   008BH   A   
+TMOD. . . . . . . .  D ADDR   0089H   A   
+TR1 . . . . . . . .  B ADDR   0088H.6 A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

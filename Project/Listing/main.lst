@@ -1,0 +1,71 @@
+A51 MACRO ASSEMBLER  MAIN                                                                 06/08/2019 20:51:41 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.02b
+OBJECT MODULE PLACED IN .\Output\main.obj
+ASSEMBLER INVOKED BY: D:\Program Files_X64\Keil\C51\BIN\A51.EXE ..\MAIN\main.asm SET(SMALL) DEBUG PRINT(.\Listing\main.l
+                      st) OBJECT(.\Output\main.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     
+----                   2     CSEG AT 0000H       ;起始绝对地址0000H
+                       3     
+0000                   4             ORG 0000H
+0000 802E              5             SJMP START      ;复位进入主函数
+                       6             
+                       7     EXTRN CODE (INT_INIT,INT0S,T0S,S_RX,DELAY_ms,ADC_init,ADC_read,LCD_init,LCD_DISPLAY)    ;�
+                             �部引用函数代码参考调用声明
+                       8     EXTRN DATA (INTE_value,DECI_value1,DECI_value2)     ;外部引用变量空间参考调用�
+                             �明
+                       9     
+                      10     
+0003                  11             ORG 0003H       ;INT0中断入口
+0003 00               12             NOP
+000B                  13             ORG 000BH       ;T0中断入口
+000B 0100     F       14             AJMP T0S
+0013                  15             ORG 0013H       ;T1中断入口
+0013 00               16             NOP
+001B                  17             ORG 001BH       ;INT1中断入口
+001B 00               18             NOP
+0023                  19             ORG 0023H       ;SERIAL中断入口
+0023 0100     F       20             AJMP S_RX
+                      21             
+                      22     
+0030                  23             ORG 0030H       ;MAIN入口地址
+0030 120000   F       24     START:  LCALL INT_INIT
+0033 120000   F       25             LCALL ADC_init
+0036 120000   F       26             LCALL LCD_init
+0039 120000   F       27     LOOP:   LCALL ADC_read
+003C 120000   F       28             LCALL LCD_DISPLAY
+003F 80F8             29             SJMP LOOP
+                      30             
+                      31             END
+A51 MACRO ASSEMBLER  MAIN                                                                 06/08/2019 20:51:41 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+ADC_INIT . . . . .  C ADDR   -----       EXT
+ADC_READ . . . . .  C ADDR   -----       EXT
+DECI_VALUE1. . . .  D ADDR   -----       EXT
+DECI_VALUE2. . . .  D ADDR   -----       EXT
+DELAY_MS . . . . .  C ADDR   -----       EXT
+INT0S. . . . . . .  C ADDR   -----       EXT
+INTE_VALUE . . . .  D ADDR   -----       EXT
+INT_INIT . . . . .  C ADDR   -----       EXT
+LCD_DISPLAY. . . .  C ADDR   -----       EXT
+LCD_INIT . . . . .  C ADDR   -----       EXT
+LOOP . . . . . . .  C ADDR   0039H   A   
+START. . . . . . .  C ADDR   0030H   A   
+S_RX . . . . . . .  C ADDR   -----       EXT
+T0S. . . . . . . .  C ADDR   -----       EXT
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

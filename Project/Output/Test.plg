@@ -1,0 +1,16 @@
+<html>
+<body>
+<pre>
+<h1>礦ision Build Log</h1>
+<h2>Project:</h2>
+E:\工程项目\MCS-C51课程设计\软件程序\数字电压表-ASM版\Project\DigitalVoltmeter.uvproj
+Project File Date:  05/07/2019
+
+<h2>Output:</h2>
+Build target 'Target 1'
+assembling main.asm...
+assembling USER_Function.asm...
+linking...
+Program Size: data=8.0 xdata=0 code=115
+creating hex file from ".\Output\DigitalVoltmeter"...
+".\Output\DigitalVoltmeter" - 0 Error(s), 0 Warning(s).
